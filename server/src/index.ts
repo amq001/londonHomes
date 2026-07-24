@@ -9,22 +9,23 @@ import morgan from 'morgan';
 
 
 // Configurations
-dotenv.config();
+dotenv.config(); // load environment variables from .env into process.env
 const app = express();
-app.use(express.json());
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
-app.use(morgan("common"));
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(express.json()); // parse incoming requests with JSON payloads
+app.use(helmet()); // set security-related HTTP headers
+app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"})); // allow cross-origin resource loading (e.g. images served to other origins)
+app.use(morgan("common")); // log HTTP requests in the "common" format
+app.use(bodyparser.json()); // parse JSON request bodies (redundant with express.json above)
+app.use(bodyparser.urlencoded({ extended: false })); // parse URL-encoded form data
+app.use(cors()); // enable Cross-Origin Resource Sharing for all routes
 
 
-
+// Routes
 app.get('/', (req, res) => {
     res.send('Hello Worlddddddddd!');
 });
 
+// Server
 const port = process.env.PORT || 3002;
 
 app.listen(port, () => {

@@ -6,7 +6,10 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "start": "npm run build && node dist/index.js",
-    "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\""
+    "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
+    "seed": "ts-node prisma/seed.ts",
+    "prisma:generate": "prisma generate",
+    "postprisma:generate": "shx cp -r node_modules/.prisma/client/index.d.ts ../client/src/types/prismaTypes.d.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1066.0",
     "@aws-sdk/lib-storage": "^3.1066.0",
+    "@prisma/adapter-pg": "^7.9.0",
+    "@prisma/client": "^7.8.0",
     "@terraformer/wkt": "^2.2.1",
     "axios": "^1.17.0",
     "body-parser": "^2.2.2",
@@ -25,6 +30,8 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "multer": "^2.1.1",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
@@ -33,6 +40,7 @@
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.1.0",
     "@types/node": "^25.9.3",
+    "@types/pg": "^8.20.0",
     "@types/terraformer__wkt": "^2.0.3",
     "@types/uuid": "^10.0.0",
     "concurrently": "^10.0.3",
