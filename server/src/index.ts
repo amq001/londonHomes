@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import bodyparser from 'body-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { authMiddleware } from './middleware/authMiddleware.js';
+import tanentRoutes from './routes/tenantRoutes.js';
+import managerRoutes from './routes/managerRoutes.js';
 
 // Route Imports
 
@@ -24,6 +27,9 @@ app.use(cors()); // enable Cross-Origin Resource Sharing for all routes
 app.get('/', (req, res) => {
     res.send('Hello Worlddddddddd!');
 });
+
+app.use('/tenants',authMiddleware(["tenant"]) ,tanentRoutes);
+app.use('/managers',authMiddleware(["manager"]) , managerRoutes);
 
 // Server
 const port = process.env.PORT || 3002;
