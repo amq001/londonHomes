@@ -1,12 +1,68 @@
+import { createNewUserInDatabase } from "@/lib/utils";
+import { Manager, Tenant } from "@/types/prismaTypes";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+    prepareHeaders: async (headers) => {
+      try {
+        const session = await fetchAuthSession();
+        const { idToken } = session.tokens ?? {};
+        if (idToken) {
+          headers.set("Authorization", `Bearer ${idToken}`);
+        }
+      } catch (error) {
+        console.error("Error fetching auth session:", error);
+      }
+      return headers;
+    },
   }),
   reducerPath: "api",
   tagTypes: [],
-  endpoints: (build) => ({}),
-});
+  endpoints: (build) => ({
+    getAuthUser: build.query<User, void>({
+      queryFn: async (_, queryApi, _extraoptions, fetchWithBQ) => {
+        try {
+          const session = await fetchAuthSession();
+          const { idToken } = session.tokens ?? {};
+          const user = await getCurrentUser();
+          const userRole = idToken?.payload["custom:role"] as string;
 
-export const {} = api;
+          const endpoint =
+            userRole === "manager"
+              ? `/managers/${user.userId}`
+              : `/tenants/${user.userId}`;
+              
+          let userDetailsResponse = await fetchWithBQ(endpoint);
+
+          // If user does not exist in the database, create a new user
+
+          if (
+            userDetailsResponse.error &&
+            userDetailsResponse.error?.status === 404
+          ) {
+            userDetailsResponse = await createNewUserInDatabase(
+              user,
+              idToken,
+              userRole,
+              fetchWithBQ,
+            );
+          }
+
+          return {
+            data: {
+              cognitoInfo: { ...user },
+              userInfo: userDetailsResponse.data as Tenant | Manager,
+              userRole: userRole,
+            },
+          };
+        } catch (error: any) {
+          return { error: error.message || "Failed to fetch user data" };
+        }
+      },
+    }),
+  }),
+});
+export const {useGetAuthUserQuery} = api;
