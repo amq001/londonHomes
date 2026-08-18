@@ -12,12 +12,9 @@ import {
 import "@aws-amplify/ui-react/styles.css";
 import { usePathname, useRouter } from "next/navigation";
 
-// import { useRouter } from "next/router";
-// import awsExports from './aws-exports';
-
 Amplify.configure({
-  auth: {
-    cognito: {
+  Auth: {
+    Cognito: {
       userPoolId: process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID!,
       userPoolClientId:
         process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_CLIENT_ID!,

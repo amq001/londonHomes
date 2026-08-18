@@ -37,3 +37,6 @@ const port = process.env.PORT || 3002;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+console.log("USER POOL:", process.env.COGNITO_USER_POOL_ID);
+console.log("CLIENT ID:", process.env.COGNITO_USER_POOL_CLIENT_ID);
