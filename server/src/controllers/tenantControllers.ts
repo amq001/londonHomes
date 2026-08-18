@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 export const getTenant = async (req: Request, res: Response): Promise<void> => {
   try {
     const { cognitoId } = req.params;
+    
+    if (typeof cognitoId !== "string") {
+      res.status(400).json({ message: "Invalid cognitoId" });
+      return;
+    }
+    
     const tanent = await prisma.tenant.findUnique({
       where: { cognitoId },
       include: {
