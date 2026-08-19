@@ -15,6 +15,8 @@ import { usePathname, useRouter } from "next/navigation";
 const DashboardContent = ({ children }: { children: React.ReactNode }) => {
   const { open } = useSidebar();
   const { data: authUser } = useGetAuthUserQuery();
+  
+  console.log("Auth User", authUser);
 
   if (!authUser?.userRole) return null;
 
@@ -33,7 +35,7 @@ const DashboardContent = ({ children }: { children: React.ReactNode }) => {
                 : "transition-all duration-200 md:ml-[5rem]"
             }
           >
-            <main className="min-w-0 flex-1">{children}</main>
+            <main className="min-w-0 flex-1" style={{marginTop:NAVBAR_HEIGHT}}>{children}</main>
           </SidebarInset>
         </div>
       </div>
